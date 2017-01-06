@@ -46,13 +46,13 @@ ShutDownProc(LPVOID p)
 }
 BOOL
 WINAPI
-HibernateAndReboot(int secs, int Operation)
+SleepAndReboot(int secs, int Operation)
 {
 	BOOL bState = FALSE;
 	if (!_EnableShutDownPriv())
 		return FALSE;
 
-	HANDLE timer = CreateWaitableTimer(NULL, TRUE, _T("MyWaitableTimer"));
+	HANDLE timer = CreateWaitableTimer(NULL, TRUE, _T("TestTimer"));
 	if (timer == NULL)
 		return FALSE;
 
@@ -79,10 +79,12 @@ HibernateAndReboot(int secs, int Operation)
 	CloseHandle(thread);
 	if (OPERATION_SLEEP == Operation)
 	{
+		_tprintf(_T("System will go to Sleep state!!!"));
 		bState = TRUE;
 	}
 	else
 	{
+		_tprintf(_T("System will go to Hibernate state!!!"));
 		bState = FALSE;
 	}
 	if (0==SetSystemPowerState(bState, FALSE))
@@ -100,11 +102,11 @@ int main(int argc,TCHAR **argv)
 	}
 	if (_tcscmp(argv[1],"-s") == 0)
 	{
-		HibernateAndReboot(1, OPERATION_SLEEP);
+		SleepAndReboot(1, OPERATION_SLEEP);
 	}
 	else if (_tcscmp(argv[1], "-h") == 0)
 	{
-		HibernateAndReboot(10,OPERATION_HIBERNATE);
+		SleepAndReboot(10,OPERATION_HIBERNATE);
 	}
 	else
 	{
